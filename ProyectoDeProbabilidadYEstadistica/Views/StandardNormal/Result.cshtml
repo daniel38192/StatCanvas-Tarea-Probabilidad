@@ -1,0 +1,72 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.StandardNormalResultViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Resultado Normal Estandar";
+    var isAdvanced = Model.FormMode == "advanced";
+    var areaLabel = isAdvanced ? "dentro del intervalo" : Model.AreaSide == "left" ? "antes de z" : "despues de z";
+    var modeLabel = isAdvanced
+        ? "area calculada en un intervalo"
+        : Model.CalculationMode == "from-area" ? "z calculado desde el area" : "area calculada desde z";
+}
+
+<section class="content-card">
+    <div class="content-card__header">
+        <span class="eyebrow">Resultado</span>
+        <h1 class="section-title mb-2">Distribucion normal estandar</h1>
+        <p class="muted-copy mb-0">La grafica resalta el area seleccionada y resume los valores calculados para la distribucion.</p>
+    </div>
+
+    <div class="result-layout">
+        <div class="viz-panel overflow-auto">
+                @Html.Raw(Model.Svg)
+        </div>
+
+        <div class="result-panel">
+            <div class="metrics-grid">
+                <div class="metric-panel">
+                    <span class="metric-label">Operacion</span>
+                    <strong class="metric-value">@modeLabel</strong>
+                </div>
+                @if (isAdvanced)
+                {
+                    <div class="metric-panel">
+                        <span class="metric-label">Intervalo</span>
+                        <strong class="metric-value">@Model.IntervalRange</strong>
+                    </div>
+                }
+                else if (Model.ZValue.HasValue)
+                {
+                    <div class="metric-panel">
+                        <span class="metric-label">Valor z</span>
+                        <strong class="metric-value">@Model.ZValue.Value.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                    </div>
+                }
+                <div class="metric-panel">
+                    <span class="metric-label">Area @areaLabel</span>
+                    <strong class="metric-value">@Model.Area.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Area complementaria</span>
+                    <strong class="metric-value">@Model.ComplementArea.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+                </div>
+            </div>
+
+            <form asp-controller="StandardNormal" asp-action="Svg" method="get" target="_blank" class="mt-4">
+                @if (isAdvanced)
+                {
+                    <input type="hidden" name="intervalRange" value="@Model.IntervalRange" />
+                }
+                else if (Model.ZValue.HasValue)
+                {
+                    <input type="hidden" name="zValue" value="@Model.ZValue.Value.ToString("R", CultureInfo.InvariantCulture)" />
+                    <input type="hidden" name="areaSide" value="@Model.AreaSide" />
+                }
+                <button type="submit" class="btn btn-outline-primary">Abrir SVG</button>
+            </form>
+
+            <form asp-controller="StandardNormal" asp-action="Index" method="get" class="mt-2">
+                <button type="submit" class="btn btn-primary">Regresar</button>
+            </form>
+        </div>
+    </div>
+</section>

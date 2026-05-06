@@ -1,0 +1,81 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.TStudentResultViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Resultado T-Student";
+    var criticalText = Model.TestType == "two-tailed"
+        ? $"±{Model.CriticalValue.ToString("0.###", CultureInfo.InvariantCulture)}"
+        : Model.CriticalValue.ToString("0.###", CultureInfo.InvariantCulture);
+    var confidenceLevel = ((1d - Model.Alpha) * 100d).ToString("0.#", CultureInfo.InvariantCulture);
+}
+
+<section class="content-card">
+    <div class="content-card__header">
+        <span class="eyebrow">Resultado</span>
+        <h1 class="section-title mb-2">Prueba t de una muestra</h1>
+        <p class="muted-copy mb-0">Se muestran los estadisticos de la muestra, la decision sobre H0 y la grafica de la distribucion t.</p>
+    </div>
+
+    <div class="result-layout">
+        <div class="viz-panel overflow-auto">
+            @Html.Raw(Model.Svg)
+        </div>
+
+        <div class="result-panel">
+            <div class="content-card__formula mb-4">
+                <div><strong>@Model.NullHypothesisText</strong></div>
+                <div>@Model.AlternativeHypothesisText</div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-panel">
+                    <span class="metric-label">Tamano de la muestra</span>
+                    <strong class="metric-value">@Model.SampleSize</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Media muestral</span>
+                    <strong class="metric-value">@Model.SampleMean.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Desviacion estandar</span>
+                    <strong class="metric-value">@Model.SampleStandardDeviation.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Grados de libertad</span>
+                    <strong class="metric-value">@Model.DegreesOfFreedom</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Estadistico t</span>
+                    <strong class="metric-value">@Model.TStatistic.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Valor critico</span>
+                    <strong class="metric-value">@criticalText</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">p-value</span>
+                    <strong class="metric-value">@Model.PValue.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Intervalo de confianza (@confidenceLevel%)</span>
+                    <strong class="metric-value">[@Model.ConfidenceIntervalLower.ToString("0.###", CultureInfo.InvariantCulture), @Model.ConfidenceIntervalUpper.ToString("0.###", CultureInfo.InvariantCulture)]</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Conclusion</span>
+                    <strong class="metric-value">@Model.Conclusion</strong>
+                </div>
+            </div>
+
+            <form asp-controller="TStudent" asp-action="Svg" method="get" target="_blank" class="mt-4">
+                <input type="hidden" name="degreesOfFreedom" value="@Model.DegreesOfFreedom" />
+                <input type="hidden" name="tStatistic" value="@Model.TStatistic.ToString("R", CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="criticalValue" value="@Model.CriticalValue.ToString("R", CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="testType" value="@Model.TestType" />
+                <button type="submit" class="btn btn-outline-primary">Abrir SVG</button>
+            </form>
+
+            <form asp-controller="TStudent" asp-action="Index" method="get" class="mt-2">
+                <button type="submit" class="btn btn-primary">Regresar</button>
+            </form>
+        </div>
+    </div>
+</section>

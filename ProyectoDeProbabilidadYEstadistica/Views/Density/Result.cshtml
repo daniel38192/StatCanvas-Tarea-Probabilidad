@@ -1,0 +1,52 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.DensityResultViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Resultado de Densidad";
+    var values = ViewBag.Values as string
+        ?? string.Join(", ", Model.Values.Select(value => value.ToString("R", CultureInfo.InvariantCulture)));
+}
+
+<section class="content-card">
+    <div class="content-card__header">
+        <span class="eyebrow">Resultado</span>
+        <h1 class="section-title mb-2">Grafica de densidad</h1>
+        <p class="muted-copy mb-0">Visualizacion generada a partir de los valores proporcionados y su resumen estadistico.</p>
+    </div>
+
+    <div class="result-layout">
+        <div class="viz-panel overflow-auto">
+                @Html.Raw(Model.Svg)
+        </div>
+
+        <div class="result-panel">
+            <div class="metrics-grid">
+                <div class="metric-panel">
+                    <span class="metric-label">Media</span>
+                    <strong class="metric-value">@Model.Mean.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Desviacion estandar</span>
+                    <strong class="metric-value">@Model.StandardDeviation.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Bandwidth</span>
+                    <strong class="metric-value">@Model.Bandwidth.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+                </div>
+                <div class="metric-panel">
+                    <span class="metric-label">Valores</span>
+                    <strong class="metric-value">@string.Join(", ", Model.Values.Select(value => value.ToString("0.###", CultureInfo.InvariantCulture)))</strong>
+                </div>
+            </div>
+
+            <form asp-controller="Density" asp-action="Svg" method="get" target="_blank" class="mt-4">
+                <input type="hidden" name="values" value="@values" />
+
+                <button type="submit" class="btn btn-outline-primary">Abrir SVG</button>
+            </form>
+
+            <form asp-controller="Density" asp-action="Index" method="get" class="mt-2">
+                <button type="submit" class="btn btn-primary">Regresar</button>
+            </form>
+        </div>
+    </div>
+</section>

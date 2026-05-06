@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Calcular Varianza";
+    var values = ViewBag.Values as string ?? string.Empty;
+    var isPopulation = ViewBag.IsPopulation as bool? ?? false;
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Modulo estadistico</span>
+        <h1 class="section-title mb-2">Calcular varianza</h1>
+        <p class="muted-copy mb-0">Ingresa una serie numerica, elige si trabajas con muestra o poblacion y obtiene las metricas principales.</p>
+    </div>
+
+    <form asp-controller="Variance" asp-action="CalculateVariance" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-4">
+            <label for="variance-selection-type" class="form-label">Tipo de varianza</label>
+            <select id="variance-selection-type" name="isPopulation" class="form-select">
+                <option value="false" selected="@(!isPopulation)">Muestra</option>
+                <option value="true" selected="@(isPopulation)">Poblacion</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="variance-values" class="form-label">Numeros</label>
+            <input
+                id="variance-values"
+                name="values"
+                type="text"
+                class="form-control"
+                value="@values"
+                placeholder="Ejemplo: 1,2,3 o 1, 2, 3, 4, 5"
+                required />
+            <div class="form-text">Separa cada numero con comas. Los espacios extra se ignoran.</div>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </div>
+    </form>
+</section>

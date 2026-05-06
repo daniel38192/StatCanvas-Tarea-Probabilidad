@@ -1,0 +1,17 @@
+- Daniel Gutiérrez - low-cortisol
+- Enoc Cruz - high-cortisol
+- Melquiades Sosa - normal-high-cortisol
+- Filiberto Grajeda - normal-cortisol
+- Jesús Fernández - normal-cortisol
+- Jairo Sánchez - low-cortisol
+- Natyelli Vélez - low-cortisol
+- Mary Tolentino - high-cortisol
+- Sheny Pet - low-cortisol
+- Alejandro Garrido - low-normal-cortisol
+- Daniel Neri - low-normal-cortisol
+- Eliseo Guadarrama - low-cortisol
+- Ignacio Cruz - low-cortisol
+- José Mendoza - normal-cortisol
+- Pablo Lemus - high-cortisol
+- Rubén López - low-normal-cortisol
+- Sem Barba - low-normal-cortisol

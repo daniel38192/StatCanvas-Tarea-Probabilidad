@@ -1,0 +1,151 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.StandardNormalInputViewModel
+@{
+    ViewData["Title"] = "Normal Estandar";
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Distribucion</span>
+        <h1 class="section-title mb-2">Normal estandar</h1>
+        <p class="muted-copy mb-0">Usa el modo normal para calcular con un solo valor z o area. Usa el modo avanzado para obtener el area dentro de un intervalo.</p>
+    </div>
+
+    <form asp-controller="StandardNormal" asp-action="Calculate" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="FormMode" class="form-label">Modo</label>
+            <select asp-for="FormMode" class="form-select" data-standard-normal-form-mode>
+                <option value="normal">Normal</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            <span asp-validation-for="FormMode" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3" data-standard-normal-normal-section>
+            <label asp-for="CalculationMode" class="form-label">Tipo de calculo</label>
+            <select asp-for="CalculationMode" class="form-select" data-standard-normal-mode>
+                <option value="from-z">Calcular area usando z</option>
+                <option value="from-area">Calcular z usando area</option>
+            </select>
+            <span asp-validation-for="CalculationMode" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3" data-standard-normal-z-group data-standard-normal-normal-section>
+            <label asp-for="ZValue" class="form-label">Valor z</label>
+            <input asp-for="ZValue" type="number" step="any" class="form-control" placeholder="Ejemplo: 1.25" />
+            <span asp-validation-for="ZValue" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3" data-standard-normal-area-group data-standard-normal-normal-section, style="display: none;">
+            <label asp-for="AreaValue" class="form-label">Area</label>
+            <input asp-for="AreaValue" type="number" step="any" min="0" max="1" class="form-control" placeholder="Ejemplo: 0.89435" />
+            <div class="form-text">Ingresa un valor estrictamente entre 0 y 1.</div>
+            <span asp-validation-for="AreaValue" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4" data-standard-normal-normal-section>
+            <label asp-for="AreaSide" class="form-label">Area a calcular</label>
+            <select asp-for="AreaSide" class="form-select">
+                <option value="left">Antes de z</option>
+                <option value="right">Despues de z</option>
+            </select>
+            <span asp-validation-for="AreaSide" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4" data-standard-normal-advanced-section>
+            <label class="form-label">Intervalo</label>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="LowerBound" class="form-label">Limite inferior</label>
+                    <input asp-for="LowerBound" type="text" class="form-control" placeholder="Ejemplo: -0.5 o -∞" data-interval-input="lower" />
+                    <span asp-validation-for="LowerBound" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="UpperBound" class="form-label">Limite superior</label>
+                    <input asp-for="UpperBound" type="text" class="form-control" placeholder="Ejemplo: 0.2 o ∞" data-interval-input="upper" />
+                    <span asp-validation-for="UpperBound" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <button type="button" class="btn btn-outline-secondary" data-infinity-button>Insertar infinito</button>
+                <span class="form-text">El boton inserta <strong data-infinity-symbol-label>-∞</strong> o <strong>∞</strong> segun el campo seleccionado.</span>
+            </div>
+            <div class="form-text mt-2">Formato esperado: <code>[-0.5, 0.2]</code>, <code>[-∞, 0.2]</code> o <code>[-Infinity, 0.2]</code>.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Calcular</button>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const formModeSelect = document.querySelector('[data-standard-normal-form-mode]');
+            const modeSelect = document.querySelector('[data-standard-normal-mode]');
+            const normalSections = document.querySelectorAll('[data-standard-normal-normal-section]');
+            const advancedSection = document.querySelector('[data-standard-normal-advanced-section]');
+            const zGroup = document.querySelector('[data-standard-normal-z-group]');
+            const areaGroup = document.querySelector('[data-standard-normal-area-group]');
+            const infinityButton = document.querySelector('[data-infinity-button]');
+            const infinitySymbolLabel = document.querySelector('[data-infinity-symbol-label]');
+            const intervalInputs = document.querySelectorAll('[data-interval-input]');
+
+            let selectedIntervalInput = document.querySelector('[data-interval-input="lower"]');
+
+            if (!formModeSelect || !modeSelect || !zGroup || !areaGroup || !advancedSection || !infinityButton || !infinitySymbolLabel) {
+                return;
+            }
+
+            const updateNormalMode = () => {
+                const fromZ = modeSelect.value === 'from-z';
+                zGroup.style.display = fromZ ? '' : 'none';
+                areaGroup.style.display = fromZ ? 'none' : '';
+            };
+
+            const updateFormMode = () => {
+                const isNormal = formModeSelect.value === 'normal';
+                normalSections.forEach(section => {
+                    section.style.display = isNormal ? '' : 'none';
+                });
+                advancedSection.style.display = isNormal ? 'none' : '';
+            };
+
+            const updateInfinityLabel = () => {
+                const symbol = selectedIntervalInput?.dataset.intervalInput === 'upper' ? '∞' : '-∞';
+                infinitySymbolLabel.textContent = symbol;
+                infinityButton.textContent = `Insertar ${symbol}`;
+            };
+
+            intervalInputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    selectedIntervalInput = input;
+                    updateInfinityLabel();
+                });
+                input.addEventListener('click', () => {
+                    selectedIntervalInput = input;
+                    updateInfinityLabel();
+                });
+            });
+
+            infinityButton.addEventListener('click', () => {
+                if (!selectedIntervalInput) {
+                    return;
+                }
+
+                selectedIntervalInput.value = selectedIntervalInput.dataset.intervalInput === 'upper' ? '∞' : '-∞';
+                selectedIntervalInput.dispatchEvent(new Event('input', { bubbles: true }));
+                selectedIntervalInput.focus();
+                updateInfinityLabel();
+            });
+
+            updateNormalMode();
+            updateFormMode();
+            updateInfinityLabel();
+            modeSelect.addEventListener('change', updateNormalMode);
+            formModeSelect.addEventListener('change', updateFormMode);
+        })();
+    </script>
+}

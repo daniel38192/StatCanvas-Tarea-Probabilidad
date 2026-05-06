@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="hero-panel">
+    <span class="eyebrow">Analisis estadistico</span>
+    <h1 class="hero-title">Herramientas visuales para probabilidad y estadistica.</h1>
+    <p class="hero-copy">
+        Calcula varianza, explora densidades, consulta la distribucion normal estandar y ejecuta pruebas T-Student desde una interfaz mas clara, rapida y enfocada en resultados.
+    </p>
+
+    <div class="hero-actions">
+        <a class="btn btn-primary" asp-controller="Variance" asp-action="Index">Calcular varianza</a>
+        <a class="btn btn-outline-primary" asp-controller="Density" asp-action="Index">Graficar densidad</a>
+        <a class="btn btn-outline-primary" asp-controller="StandardNormal" asp-action="Index">Normal estandar</a>
+        <a class="btn btn-outline-primary" asp-controller="TStudent" asp-action="Index">T-Student</a>
+        <a class="btn btn-outline-primary" asp-controller="Problems" asp-action="Index">Problemas guiados</a>
+    </div>
+
+    <div class="hero-stats">
+        <div class="stat-chip">
+            <strong>4 modulos</strong>
+            <span>Calculos y visualizaciones en una sola app</span>
+        </div>
+        <div class="stat-chip">
+            <strong>Entradas dinamicas</strong>
+            <span>Agrega tantos valores como necesites</span>
+        </div>
+        <div class="stat-chip">
+            <strong>Resultados claros</strong>
+            <span>Metricas y graficas con mejor jerarquia visual</span>
+        </div>
+    </div>
+</section>
+
+<section class="section-heading">
+    <h2 class="section-title">Modulos disponibles</h2>
+    <p class="section-copy">Cada herramienta mantiene el mismo lenguaje visual para que la navegacion y la lectura de resultados sean consistentes.</p>
+</section>
+
+<section class="feature-grid">
+    <article class="feature-card">
+        <div class="feature-card__icon">V</div>
+        <strong>Varianza</strong>
+        <p>Compara muestra y poblacion, calcula media, varianza y desviacion estandar a partir de listas de datos.</p>
+        <a class="btn btn-outline-primary mt-3" asp-controller="Variance" asp-action="Index">Abrir modulo</a>
+    </article>
+
+    <article class="feature-card">
+        <div class="feature-card__icon">D</div>
+        <strong>Densidad</strong>
+        <p>Genera una estimacion visual de densidad para comprender la forma y concentracion de tus observaciones.</p>
+        <a class="btn btn-outline-primary mt-3" asp-controller="Density" asp-action="Index">Abrir modulo</a>
+    </article>
+
+    <article class="feature-card">
+        <div class="feature-card__icon">Z</div>
+        <strong>Normal estandar</strong>
+        <p>Calcula el area a la izquierda o derecha de un valor z y visualiza la zona sombreada en la curva.</p>
+        <a class="btn btn-outline-primary mt-3" asp-controller="StandardNormal" asp-action="Index">Abrir modulo</a>
+    </article>
+
+    <article class="feature-card">
+        <div class="feature-card__icon">T</div>
+        <strong>T-Student</strong>
+        <p>Evalua una prueba t de una muestra, muestra el p-value, el valor critico y el intervalo de confianza con su grafica.</p>
+        <a class="btn btn-outline-primary mt-3" asp-controller="TStudent" asp-action="Index">Abrir modulo</a>
+    </article>
+
+    <article class="feature-card">
+        <div class="feature-card__icon">P</div>
+        <strong>Problemas guiados</strong>
+        <p>Resuelve una coleccion de ejercicios de distribucion normal y t-student.</p>
+        <a class="btn btn-outline-primary mt-3" asp-controller="Problems" asp-action="Index">Abrir modulo</a>
+    </article>
+</section>

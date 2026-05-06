@@ -1,0 +1,76 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.ExpectedValueInputViewModel
+@{
+    ViewData["Title"] = "Calcular Valor esperado";
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Esperanza matematica</span>
+        <h1 class="section-title mb-2">Calcular valor esperado</h1>
+        <p class="muted-copy">Usa el modo normal para asignar probabilidades iguales. Usa el modo avanzado para capturar una probabilidad individual por cada valor.</p>
+    </div>
+
+    <div class="content-card__formula mb-4">
+        E(X) = Σ x<sub>i</sub> · P(x<sub>i</sub>)
+    </div>
+
+    <form asp-controller="ExpectedValue" asp-action="Result" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-4">
+            <label asp-for="FormMode" class="form-label">Modo</label>
+            <select asp-for="FormMode" class="form-select" data-expected-value-mode>
+                <option value="normal">Normal</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            <span asp-validation-for="FormMode" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="Values" class="form-label">Numeros</label>
+            <input asp-for="Values"
+                   type="text"
+                   class="form-control"
+                   placeholder="Ejemplo: 1,2,3 o 1, 2, 3, 4, 5"
+                   required />
+            <div class="form-text">Separa cada numero con comas. Los espacios extra se ignoran.</div>
+            <span asp-validation-for="Values" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4" data-expected-value-advanced>
+            <label asp-for="Probabilities" class="form-label">Probabilidades</label>
+            <input asp-for="Probabilities"
+                   type="text"
+                   class="form-control"
+                   placeholder="Ejemplo: 0.2, 0.2, 0.6" />
+            <div class="form-text">Ingresa una probabilidad por cada valor. La suma total debe ser menor o igual a 1.</div>
+            <span asp-validation-for="Probabilities" class="text-danger"></span>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const modeSelect = document.querySelector('[data-expected-value-mode]');
+            const advancedSection = document.querySelector('[data-expected-value-advanced]');
+
+            if (!modeSelect || !advancedSection) {
+                return;
+            }
+
+            const updateMode = () => {
+                advancedSection.style.display = modeSelect.value === 'advanced' ? '' : 'none';
+            };
+
+            updateMode();
+            modeSelect.addEventListener('change', updateMode);
+        })();
+    </script>
+}

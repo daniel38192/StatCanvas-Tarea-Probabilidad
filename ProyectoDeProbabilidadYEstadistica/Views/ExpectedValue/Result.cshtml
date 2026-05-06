@@ -1,0 +1,41 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.ExpectedValueResultViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Resultado de Valor Esperado";
+    var isAdvanced = Model.FormMode == "advanced";
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Resultado</span>
+        <h1 class="section-title mb-2">Valor esperado</h1>
+        <p class="muted-copy mb-0">El calculo de esperanza matematica se presenta a continuacion.</p>
+    </div>
+
+    <div class="metrics-grid mb-4">
+        <div class="metric-panel">
+            <span class="metric-label">Modo</span>
+            <strong class="metric-value">@(isAdvanced ? "Advanced" : "Normal")</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Valor esperado E[X]</span>
+            <strong class="metric-value">@Model.ExpectedValue.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Valores</span>
+            <strong class="metric-value">@string.Join(", ", Model.Values.Select(value => value.ToString("0.###", CultureInfo.InvariantCulture)))</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Probabilidades</span>
+            <strong class="metric-value">@string.Join(", ", Model.Probabilities.Select(value => value.ToString("0.###", CultureInfo.InvariantCulture)))</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Suma de probabilidades</span>
+            <strong class="metric-value">@Model.ProbabilityTotal.ToString("0.###", CultureInfo.InvariantCulture)</strong>
+        </div>
+    </div>
+
+    <form asp-controller="ExpectedValue" asp-action="Index" method="get">
+        <button type="submit" class="btn btn-primary">Regresar</button>
+    </form>
+</section>

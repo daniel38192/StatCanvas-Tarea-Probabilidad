@@ -1,0 +1,125 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.NegativeBinomialInputViewModel
+@{
+    ViewData["Title"] = "Distribucion binomial negativa";
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Distribucion discreta</span>
+        <h1 class="section-title mb-2">Distribucion binomial negativa</h1>
+        <p class="muted-copy mb-0">Configura el numero objetivo de exitos, la probabilidad de exito y el modo de calculo para evaluar la variable aleatoria X.</p>
+    </div>
+
+    <div class="content-card__formula mb-4">
+        P(X = x) = C(x + r - 1, x) · p<sup>r</sup> · q<sup>x</sup>
+    </div>
+
+    <form asp-controller="NegativeBinomial" asp-action="Calculate" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-4">
+            <label asp-for="TrialSize" class="form-label">Tamano de ensayos (r)</label>
+            <input asp-for="TrialSize" type="number" min="1" step="1" class="form-control" placeholder="Ejemplo: 3" />
+            <div class="form-text">Representa la cantidad objetivo de exitos.</div>
+            <span asp-validation-for="TrialSize" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="SuccessProbability" class="form-label">Probabilidad de exito (p)</label>
+            <input asp-for="SuccessProbability" type="number" min="0" max="1" step="any" class="form-control" placeholder="Ejemplo: 0.35" data-negative-binomial-p />
+            <span asp-validation-for="SuccessProbability" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Probabilidad de fracaso (q = 1 - p)</label>
+            <input type="text" class="form-control" value="@(Model.SuccessProbability.HasValue ? (1d - Model.SuccessProbability.Value).ToString("0.######") : string.Empty)" readonly data-negative-binomial-q />
+            <div class="form-text">Este valor se calcula automaticamente a partir de p.</div>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="CalculationMode" class="form-label">Modo de calculo para x</label>
+            <select asp-for="CalculationMode" class="form-select" data-negative-binomial-mode>
+                <option value="single">Una sola variable</option>
+                <option value="interval">Intervalo de variables</option>
+                <option value="sum">Suma Σ</option>
+            </select>
+            <span asp-validation-for="CalculationMode" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4" data-negative-binomial-single>
+            <label asp-for="XValue" class="form-label">Valor x</label>
+            <input asp-for="XValue" type="number" min="0" step="1" class="form-control" placeholder="Ejemplo: 4" />
+            <span asp-validation-for="XValue" class="text-danger"></span>
+        </div>
+
+        <div class="mb-4" data-negative-binomial-interval>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="IntervalStart" class="form-label">x inicial</label>
+                    <input asp-for="IntervalStart" type="number" min="0" step="1" class="form-control" placeholder="Ejemplo: 2" />
+                    <span asp-validation-for="IntervalStart" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="IntervalEnd" class="form-label">x final</label>
+                    <input asp-for="IntervalEnd" type="number" min="0" step="1" class="form-control" placeholder="Ejemplo: 5" />
+                    <span asp-validation-for="IntervalEnd" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4" data-negative-binomial-sum>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="SumStart" class="form-label">Limite inferior de Σ</label>
+                    <input asp-for="SumStart" type="number" min="0" step="1" class="form-control" placeholder="Ejemplo: 0" />
+                    <span asp-validation-for="SumStart" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SumEnd" class="form-label">Limite superior de Σ</label>
+                    <input asp-for="SumEnd" type="number" min="0" step="1" class="form-control" placeholder="Ejemplo: 4" />
+                    <span asp-validation-for="SumEnd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-text mt-2">Se calcula la suma de probabilidades desde el limite inferior hasta el superior.</div>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const pInput = document.querySelector('[data-negative-binomial-p]');
+            const qInput = document.querySelector('[data-negative-binomial-q]');
+            const modeSelect = document.querySelector('[data-negative-binomial-mode]');
+            const singleSection = document.querySelector('[data-negative-binomial-single]');
+            const intervalSection = document.querySelector('[data-negative-binomial-interval]');
+            const sumSection = document.querySelector('[data-negative-binomial-sum]');
+
+            if (!pInput || !qInput || !modeSelect || !singleSection || !intervalSection || !sumSection) {
+                return;
+            }
+
+            const updateQ = () => {
+                const value = Number.parseFloat(pInput.value);
+                qInput.value = Number.isFinite(value) ? (1 - value).toFixed(6).replace(/0+$/, '').replace(/\.$/, '') : '';
+            };
+
+            const updateMode = () => {
+                singleSection.style.display = modeSelect.value === 'single' ? '' : 'none';
+                intervalSection.style.display = modeSelect.value === 'interval' ? '' : 'none';
+                sumSection.style.display = modeSelect.value === 'sum' ? '' : 'none';
+            };
+
+            updateQ();
+            updateMode();
+            pInput.addEventListener('input', updateQ);
+            modeSelect.addEventListener('change', updateMode);
+        })();
+    </script>
+}

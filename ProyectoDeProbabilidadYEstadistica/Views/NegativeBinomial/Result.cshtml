@@ -1,0 +1,76 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.NegativeBinomialResultViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Resultado binomial negativa";
+    var modeLabel = Model.CalculationMode == "single"
+        ? "Variable individual"
+        : Model.CalculationMode == "interval"
+            ? "Intervalo de variables"
+            : "Suma Σ";
+}
+
+<section class="content-card">
+    <div class="content-card__header">
+        <span class="eyebrow">Resultado</span>
+        <h1 class="section-title mb-2">Distribucion binomial negativa</h1>
+        <p class="muted-copy mb-0">Se muestra la probabilidad calculada para el modo seleccionado y el detalle de los terminos evaluados.</p>
+    </div>
+
+    <div class="metrics-grid mb-4">
+        <div class="metric-panel">
+            <span class="metric-label">Modo</span>
+            <strong class="metric-value">@modeLabel</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Operacion</span>
+            <strong class="metric-value">@Model.OperationLabel</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Tamano de ensayos r</span>
+            <strong class="metric-value">@Model.TrialSize</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Probabilidad de exito p</span>
+            <strong class="metric-value">@Model.SuccessProbability.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Probabilidad de fracaso q</span>
+            <strong class="metric-value">@Model.FailureProbability.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Probabilidad total</span>
+            <strong class="metric-value">@Model.Probability.ToString("0.######", CultureInfo.InvariantCulture)</strong>
+        </div>
+    </div>
+
+    <div class="content-card mb-4">
+        <div class="content-card__header">
+            <span class="eyebrow">Detalle</span>
+            <h2 class="section-title mb-2">Terminos evaluados</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                <tr>
+                    <th scope="col">x</th>
+                    <th scope="col">P(X = x)</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var term in Model.Terms)
+                {
+                    <tr>
+                        <td>@term.X</td>
+                        <td>@term.Probability.ToString("0.######", CultureInfo.InvariantCulture)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <form asp-controller="NegativeBinomial" asp-action="Index" method="get">
+        <button type="submit" class="btn btn-primary">Regresar</button>
+    </form>
+</section>

@@ -1,0 +1,31 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Resultado de Varianza";
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Resultado</span>
+        <h1 class="section-title mb-2">Varianza @Model.Type</h1>
+        <p class="muted-copy mb-0">Resumen de las metricas principales calculadas con los datos enviados.</p>
+    </div>
+
+    <div class="metrics-grid mb-4">
+        <div class="metric-panel">
+            <span class="metric-label">Varianza total</span>
+            <strong class="metric-value">@Model.Variance</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Desviacion estandar</span>
+            <strong class="metric-value">@Model.Std</strong>
+        </div>
+        <div class="metric-panel">
+            <span class="metric-label">Media</span>
+            <strong class="metric-value">@Model.Mean</strong>
+        </div>
+    </div>
+
+    <form asp-controller="Variance" asp-action="Index" method="get">
+        <button type="submit" class="btn btn-primary">Regresar</button>
+    </form>
+</section>

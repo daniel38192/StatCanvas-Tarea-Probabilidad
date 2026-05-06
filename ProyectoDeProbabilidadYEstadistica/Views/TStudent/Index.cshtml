@@ -1,0 +1,64 @@
+@model ProyectoDeProbabilidadYEstadistica.Models.TStudentInputViewModel
+@{
+    ViewData["Title"] = "T-Student";
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Prueba de hipotesis</span>
+        <h1 class="section-title mb-2">Distribucion T-Student</h1>
+        <p class="muted-copy mb-0">Ingresa la muestra, define mu0 y selecciona alpha para calcular el estadistico t, el p-value y el intervalo de confianza.</p>
+    </div>
+
+    <form asp-controller="TStudent" asp-action="Calculate" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="RawValues" class="form-label">Datos observados</label>
+            <textarea asp-for="RawValues" class="form-control input-textarea" rows="6" placeholder="Ejemplo: 28, 32, 31, 29, 27, 30"></textarea>
+            <span asp-validation-for="RawValues" class="text-danger"></span>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label asp-for="HypothesizedMean" class="form-label">mu0</label>
+                <input asp-for="HypothesizedMean" type="number" step="any" class="form-control" placeholder="Ejemplo: 30" />
+                <span asp-validation-for="HypothesizedMean" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Alpha" class="form-label">Alpha</label>
+                <select asp-for="Alpha" class="form-select">
+                    <option value="0.05">0.05</option>
+                    <option value="0.10">0.10</option>
+                    <option value="0.15">0.15</option>
+                </select>
+                <span asp-validation-for="Alpha" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="TestType" class="form-label">Hipotesis alternativa</label>
+                <select asp-for="TestType" class="form-select">
+                    <option value="two-tailed">H1: mu != mu0</option>
+                    <option value="left-tailed">H1: mu &lt; mu0</option>
+                    <option value="right-tailed">H1: mu &gt; mu0</option>
+                </select>
+                <span asp-validation-for="TestType" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="content-card__formula mt-4">
+            <div><strong>@Model.NullHypothesisText</strong></div>
+            <div>@Model.AlternativeHypothesisText</div>
+        </div>
+
+        <div class="action-row mt-4">
+            <button type="submit" class="btn btn-primary">Calcular prueba t</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,60 @@
+@model IReadOnlyList<ProyectoDeProbabilidadYEstadistica.Models.Home.CortisolRankingEntryViewModel>
+@{
+    ViewData["Title"] = "Ranking de cortisoles";
+}
+
+<section class="hero-panel cortisol-hero">
+    <span class="eyebrow">Pagina oculta</span>
+    <h1 class="hero-title cortisol-hero__title">Ranking visual de cortisoles.</h1>
+    <p class="hero-copy">
+        Mural de individuos con su fotografia, nombre y metrica visual del nivel de cortisol asignado.
+    </p>
+
+    <div class="hero-stats cortisol-hero__stats">
+        <div class="stat-chip">
+            <strong>@Model.Count personas</strong>
+            <span>Ordenadas segun el listado definido en el documento base</span>
+        </div>
+        <div class="stat-chip">
+            <strong>5 niveles</strong>
+            <span>Low, low-normal, normal, normal-high y high cortisol</span>
+        </div>
+        <div class="stat-chip">
+            <strong>Mural oculto</strong>
+            <span>Usa el layout general sin aparecer en la navegacion principal</span>
+        </div>
+    </div>
+</section>
+
+<section class="section-heading">
+    <h2 class="section-title">Mural de individuos</h2>
+    <p class="section-copy">Cada ficha combina retrato y metrica para facilitar la lectura rapida del ranking.</p>
+</section>
+
+<section class="cortisol-wall" aria-label="Ranking de cortisoles">
+    @for (var index = 0; index < Model.Count; index++)
+    {
+        var entry = Model[index];
+        <article class="cortisol-card">
+            <div class="cortisol-card__media">
+                <img class="cortisol-card__photo" src="@entry.PhotoPath" alt="Fotografia de @entry.Name"/>
+                <span class="cortisol-card__rank">#@(index + 1)</span>
+            </div>
+
+            <div class="cortisol-card__body">
+                <div>
+                    <p class="cortisol-card__label">Individuo</p>
+                    <h3 class="cortisol-card__name">@entry.Name</h3>
+                </div>
+
+                <div class="cortisol-card__metric">
+                    <div>
+                        <p class="cortisol-card__label">Nivel de cortisol</p>
+                        <strong class="cortisol-card__level">@entry.CortisolLevel</strong>
+                    </div>
+                    <img class="cortisol-card__metric-image" src="@entry.MetricImagePath" alt="Indicador visual de @entry.CortisolLevel"/>
+                </div>
+            </div>
+        </article>
+    }
+</section>

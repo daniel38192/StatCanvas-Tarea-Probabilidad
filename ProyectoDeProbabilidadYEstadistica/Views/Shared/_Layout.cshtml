@@ -1,0 +1,103 @@
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var isToolsSection = controller is "Variance" or "Density" or "StandardNormal" or "TStudent" or "ExpectedValue" or "NegativeBinomial";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - ProyectoDeProbabilidadYEstadistica</title>
+    <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/ProyectoDeProbabilidadYEstadistica.styles.css" asp-append-version="true"/>
+</head>
+<body>
+<div class="app-shell">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container app-container">
+                <a class="brand-mark" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark__badge" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" class="brand-mark__icon" role="img">
+                            <path d="M14 46c6-13 12-20 18-20 8 0 12 11 18 11 4 0 8-3 12-9" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="44" r="4" fill="currentColor"/>
+                            <circle cx="32" cy="28" r="4" fill="currentColor"/>
+                            <circle cx="46" cy="36" r="4" fill="currentColor"/>
+                        </svg>
+                    </span>
+                    <span>
+                        <span class="brand-mark__title">StatCanvas</span>
+                        <span class="brand-mark__subtitle">Probability and data visuals</span>
+                    </span>
+                </a>
+                <button class="navbar-toggler nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="main-navigation">
+                    <ul class="navbar-nav ms-auto app-nav">
+                        <li class="nav-item">
+                            <a class="nav-link @(controller == "Home" && action == "Index" ? "active" : null)" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(isToolsSection ? "active" : null)" href="#" id="tools-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Herramientas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="tools-dropdown">
+                                <li>
+                                    <a class="dropdown-item @(controller == "Variance" ? "active" : null)" asp-area="" asp-controller="Variance" asp-action="Index">Varianza</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(controller == "Density" ? "active" : null)" asp-area="" asp-controller="Density" asp-action="Index">Densidad</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(controller == "StandardNormal" ? "active" : null)" asp-area="" asp-controller="StandardNormal" asp-action="Index">Normal estandar</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(controller == "TStudent" ? "active" : null)" asp-area="" asp-controller="TStudent" asp-action="Index">T-Student</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(controller == "ExpectedValue" ? "active" : null)" asp-area="" asp-controller="ExpectedValue" asp-action="Index">Valor esperado</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(controller == "NegativeBinomial" ? "active" : null)" asp-area="" asp-controller="NegativeBinomial" asp-action="Index">Binomial negativa</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(controller == "Problems" ? "active" : null)" asp-area="" asp-controller="Problems" asp-action="Index">Problemas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(controller == "Home" && action == "Games" ? "active" : null)" asp-area="" asp-controller="Home" asp-action="Games">Juegos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="page-content">
+        <div class="container app-container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container app-container footer-content">
+            <p class="mb-0">Proyecto de Probabilidad y Estadistica</p>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Politica de privacidad</a>
+        </div>
+    </footer>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

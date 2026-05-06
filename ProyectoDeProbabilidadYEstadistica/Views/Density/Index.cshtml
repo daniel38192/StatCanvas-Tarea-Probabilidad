@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "Densidad de Probabilidad";
+    var values = ViewBag.Values as string ?? string.Empty;
+}
+
+<section class="content-card content-card--narrow">
+    <div class="content-card__header">
+        <span class="eyebrow">Visualizacion</span>
+        <h1 class="section-title mb-2">Funcion de densidad de probabilidad</h1>
+        <p class="muted-copy mb-0">Ingresa un arreglo de numeros. El servidor calcula una estimacion de densidad y genera un SVG listo para inspeccionar.</p>
+    </div>
+
+    <form asp-controller="Density" asp-action="Generate" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-4">
+            <label for="density-values" class="form-label">Numeros</label>
+            <input
+                id="density-values"
+                name="values"
+                type="text"
+                class="form-control"
+                value="@values"
+                placeholder="Ejemplo: 1,2,3 o 1, 2, 3, 4, 5"
+                required />
+            <div class="form-text">Separa cada numero con comas. Los espacios extra se ignoran.</div>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">Generar grafica</button>
+        </div>
+    </form>
+</section>

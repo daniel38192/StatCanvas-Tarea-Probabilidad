@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My first SVG</h1>
+
+<svg width="150" height="100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+    <ellipse cx="90" cy="50" rx="40" ry="15" stroke="black" stroke-width="3"/>
+    <polyline points="0,0 1,1 2,2 3,3 4,4 5,5.5" style="fill:none;stroke:green;stroke-width:3" />
+    Sorry, your browser does not support inline SVG.
+</svg>
+<div id="svg2"></div>
+<script>
+    let text = ""
+    let x = []
+    let y = []
+    for(i = 0; i < 100; i++){
+        x.push(i*10)
+        y.push(Math.sin(i/2)*30)
+    }
+    svgX = x
+    svgY = []
+    for(i = 0; i< y.length; i++){
+        svgY.push((y[i]+ 100))
+    }
+    let svgText = "<svg width=\"1500\" height=\"1000\" xmlns=\"http://www.w3.org/2000/svg\"><polyline points=\""
+    for(i = 0; i < svgX.length; i++){
+        svgText += svgX[i]+","+svgY[i]+" "
+    }
+    svgText += "\" style=\"fill:none;stroke:green;stroke-width:3\" /></svg>"
+    console.log(svgText)
+    document.getElementById("svg2").innerHTML = svgText
+</script>
+</body>
+</html>

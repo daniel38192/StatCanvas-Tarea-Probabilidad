@@ -22,6 +22,10 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
+[/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Games/Games.cshtml]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Density/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVuc2l0eS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -38,12 +42,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRXhwZWN0ZWRWYWx1ZS9SZXN1bHQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Home/CortisolRanking.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Db3J0aXNvbFJhbmtpbmcuY3NodG1s
+[/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Games/Game1.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvR2FtZXMvR2FtZTEuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Home/Games.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9HYW1lcy5jc2h0bWw=
+[/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Games/Game2.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvR2FtZXMvR2FtZTIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Home/CortisolRanking.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Db3J0aXNvbFJhbmtpbmcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/Views/Home/Index.cshtml]

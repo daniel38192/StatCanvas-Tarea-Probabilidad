@@ -100,3 +100,5 @@
 /Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/obj/Debug/net10.0/compressed/o9styp4xnz-{0}-h7rvkyrsk5-h7rvkyrsk5.gz
 /Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/obj/Debug/net10.0/compressed/im3atyseqf-{0}-a6y27zojex-a6y27zojex.gz
 /Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/obj/Debug/net10.0/compressed/k7knldqhpk-{0}-3ql8zj9sx2-3ql8zj9sx2.gz
+/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/obj/Debug/net10.0/ProyectoDeProbabilidadYEstadistica.sourcelink.json
+/Users/danielnunezvillegas/RiderProjects/ProyectoDeProbabilidadYEstadistica/ProyectoDeProbabilidadYEstadistica/obj/Debug/net10.0/compressed/a3xknxjg1x-{0}-zh2cpdpbgr-zh2cpdpbgr.gz

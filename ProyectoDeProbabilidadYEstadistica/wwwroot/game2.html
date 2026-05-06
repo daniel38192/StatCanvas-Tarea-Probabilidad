@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Juego de Pelota</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --fondo-superior: #12305e;
+            --fondo-inferior: #040a15;
+            --linea: rgba(145, 219, 255, 0.18);
+            --texto: #f2fbff;
+            --texto-suave: #a9c5db;
+            --acento: #7be0ff;
+            --peligro: #ff8ea2;
+            --exito: #73f0bd;
+            --bloque-1: #ffd166;
+            --bloque-2: #ff8c42;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top, rgba(123, 224, 255, 0.16), transparent 28%),
+                linear-gradient(180deg, var(--fondo-superior), var(--fondo-inferior) 62%);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            position: relative;
+        }
+
+        .escena {
+            position: fixed;
+            inset: 0;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .estado {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            padding: 10px 14px;
+            border: 1px solid var(--linea);
+            border-radius: 14px;
+            background: rgba(6, 15, 28, 0.56);
+            color: var(--texto);
+            backdrop-filter: blur(12px);
+            user-select: none;
+        }
+
+        .estado strong {
+            color: var(--acento);
+        }
+
+        .capa {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: rgba(1, 7, 15, 0.56);
+            text-align: center;
+        }
+
+        .capa[hidden] {
+            display: none;
+        }
+
+        .capa__tarjeta {
+            width: min(92vw, 520px);
+            padding: 30px 32px;
+            border: 1px solid var(--linea);
+            border-radius: 24px;
+            background: rgba(7, 16, 30, 0.9);
+            color: var(--texto);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+        }
+
+        .capa__tarjeta h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 3.4rem);
+        }
+
+        .capa__tarjeta p {
+            margin: 0;
+            color: var(--texto-suave);
+            line-height: 1.65;
+            font-size: 1.05rem;
+        }
+
+        .capa__acciones {
+            margin-top: 22px;
+        }
+
+        .boton {
+            border: 1px solid rgba(123, 224, 255, 0.42);
+            border-radius: 999px;
+            padding: 12px 20px;
+            background: rgba(123, 224, 255, 0.12);
+            color: var(--texto);
+            font: inherit;
+            cursor: pointer;
+            transition: transform 120ms ease, background-color 120ms ease;
+        }
+
+        .boton:hover {
+            transform: translateY(-1px);
+            background: rgba(123, 224, 255, 0.2);
+        }
+
+        .estado-exito {
+            color: var(--exito);
+        }
+
+        .estado-peligro {
+            color: var(--peligro);
+        }
+    </style>
+</head>
+<body>
+<div class="escena" id="escena">
+    <canvas id="gameCanvas"></canvas>
+</div>
+
+<div class="estado">
+    Bloques destruidos: <strong id="bloquesDestruidos">0</strong>
+</div>
+
+<div class="capa" id="capa">
+    <div class="capa__tarjeta">
+        <h1 id="tituloCapa">Rompe todos los bloques</h1>
+        <p id="mensajeCapa">Mueve la plataforma con el cursor. Rebota la pelota y destruye todos los bloques para ganar.</p>
+        <div class="capa__acciones">
+            <button id="botonCapa" class="boton" type="button">Iniciar juego</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const context = canvas.getContext('2d');
+    const escena = document.getElementById('escena');
+    const capa = document.getElementById('capa');
+    const tituloCapa = document.getElementById('tituloCapa');
+    const mensajeCapa = document.getElementById('mensajeCapa');
+    const botonCapa = document.getElementById('botonCapa');
+    const bloquesDestruidos = document.getElementById('bloquesDestruidos');
+
+    const configuracion = {
+        pelota: {
+            radio: 12,
+            velocidad: 6
+        },
+        plataforma: {
+            ancho: 210,
+            alto: 18,
+            margenInferior: 44
+        },
+        bloque: {
+            columnas: 6,
+            filas: 4,
+            ancho: 150,
+            alto: 34,
+            espacioHorizontal: 18,
+            espacioVertical: 18
+        }
+    };
+
+    const estado = {
+        corriendo: false,
+        cuadro: 0,
+        destruidos: 0,
+        plataforma: {
+            x: 0,
+            y: 0,
+            ancho: configuracion.plataforma.ancho,
+            alto: configuracion.plataforma.alto
+        },
+        pelota: {
+            x: 0,
+            y: 0,
+            vx: configuracion.pelota.velocidad,
+            vy: -configuracion.pelota.velocidad,
+            radio: configuracion.pelota.radio
+        },
+        bloques: []
+    };
+
+    function redimensionarCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        estado.plataforma.y = canvas.height - configuracion.plataforma.margenInferior;
+
+        if (estado.plataforma.x + estado.plataforma.ancho > canvas.width) {
+            estado.plataforma.x = canvas.width - estado.plataforma.ancho;
+        }
+
+        if (estado.plataforma.x < 0) {
+            estado.plataforma.x = 0;
+        }
+
+        dibujar();
+    }
+
+    function crearBloques() {
+        const filaY = Math.max(90, canvas.height * 0.14);
+        const totalAncho =
+            configuracion.bloque.ancho * configuracion.bloque.columnas +
+            configuracion.bloque.espacioHorizontal * (configuracion.bloque.columnas - 1);
+        const inicioX = (canvas.width - totalAncho) / 2;
+
+        estado.bloques = [];
+
+        for (let fila = 0; fila < configuracion.bloque.filas; fila += 1) {
+            for (let columna = 0; columna < configuracion.bloque.columnas; columna += 1) {
+                estado.bloques.push({
+                    x: inicioX + columna * (configuracion.bloque.ancho + configuracion.bloque.espacioHorizontal),
+                    y: filaY + fila * (configuracion.bloque.alto + configuracion.bloque.espacioVertical),
+                    ancho: configuracion.bloque.ancho,
+                    alto: configuracion.bloque.alto,
+                    vivo: true
+                });
+            }
+        }
+    }
+
+    function actualizarMarcador() {
+        bloquesDestruidos.textContent = estado.destruidos;
+    }
+
+    function mostrarCapa(titulo, mensaje, textoBoton, claseEstado) {
+        tituloCapa.textContent = titulo;
+        mensajeCapa.textContent = mensaje;
+        botonCapa.textContent = textoBoton;
+        tituloCapa.className = claseEstado ?? '';
+        mensajeCapa.hidden = !mensaje;
+        capa.hidden = false;
+    }
+
+    function ocultarCapa() {
+        capa.hidden = true;
+    }
+
+    function reiniciarPelota() {
+        estado.pelota.x = canvas.width / 2;
+        estado.pelota.y = canvas.height * 0.62;
+        estado.pelota.vx = (Math.random() > 0.5 ? 1 : -1) * configuracion.pelota.velocidad;
+        estado.pelota.vy = -configuracion.pelota.velocidad;
+    }
+
+    function reiniciarJuego() {
+        estado.destruidos = 0;
+        estado.plataforma.x = (canvas.width - estado.plataforma.ancho) / 2;
+        estado.plataforma.y = canvas.height - configuracion.plataforma.margenInferior;
+        crearBloques();
+        reiniciarPelota();
+        actualizarMarcador();
+    }
+
+    function iniciarJuego() {
+        if (estado.corriendo) {
+            return;
+        }
+
+        estado.corriendo = true;
+        ocultarCapa();
+        bucle();
+    }
+
+    function terminarJuego(titulo, mensaje, textoBoton, claseEstado) {
+        estado.corriendo = false;
+        cancelAnimationFrame(estado.cuadro);
+        mostrarCapa(titulo, mensaje, textoBoton, claseEstado);
+    }
+
+    function moverPlataforma(clientX) {
+        const rect = canvas.getBoundingClientRect();
+        const xRelativo = ((clientX - rect.left) / rect.width) * canvas.width;
+        estado.plataforma.x = Math.max(
+            0,
+            Math.min(canvas.width - estado.plataforma.ancho, xRelativo - estado.plataforma.ancho / 2)
+        );
+    }
+
+    function dibujarFondo() {
+        const gradiente = context.createLinearGradient(0, 0, 0, canvas.height);
+        gradiente.addColorStop(0, '#12305e');
+        gradiente.addColorStop(1, '#040a15');
+        context.fillStyle = gradiente;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        context.strokeStyle = 'rgba(123, 224, 255, 0.12)';
+        context.lineWidth = 1;
+
+        for (let x = 60; x < canvas.width; x += 60) {
+            context.beginPath();
+            context.moveTo(x, 0);
+            context.lineTo(x, canvas.height);
+            context.stroke();
+        }
+
+        for (let y = 60; y < canvas.height; y += 60) {
+            context.beginPath();
+            context.moveTo(0, y);
+            context.lineTo(canvas.width, y);
+            context.stroke();
+        }
+    }
+
+    function dibujarPlataforma() {
+        context.fillStyle = '#7be0ff';
+        context.shadowColor = 'rgba(123, 224, 255, 0.5)';
+        context.shadowBlur = 18;
+        context.fillRect(
+            estado.plataforma.x,
+            estado.plataforma.y,
+            estado.plataforma.ancho,
+            estado.plataforma.alto
+        );
+        context.shadowBlur = 0;
+    }
+
+    function dibujarPelota() {
+        context.beginPath();
+        context.arc(estado.pelota.x, estado.pelota.y, estado.pelota.radio, 0, Math.PI * 2);
+        context.fillStyle = '#f2fbff';
+        context.shadowColor = 'rgba(255, 255, 255, 0.6)';
+        context.shadowBlur = 16;
+        context.fill();
+        context.closePath();
+        context.shadowBlur = 0;
+    }
+
+    function dibujarBloques() {
+        estado.bloques.forEach((bloque, indice) => {
+            if (!bloque.vivo) {
+                return;
+            }
+
+            const gradiente = context.createLinearGradient(bloque.x, bloque.y, bloque.x, bloque.y + bloque.alto);
+            const esPar = indice % 2 === 0;
+            gradiente.addColorStop(0, esPar ? '#ffd166' : '#ff9d52');
+            gradiente.addColorStop(1, esPar ? '#ffb347' : '#ff6f3c');
+
+            context.fillStyle = gradiente;
+            context.fillRect(bloque.x, bloque.y, bloque.ancho, bloque.alto);
+            context.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+            context.strokeRect(bloque.x, bloque.y, bloque.ancho, bloque.alto);
+        });
+    }
+
+    function dibujar() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        dibujarFondo();
+        dibujarBloques();
+        dibujarPlataforma();
+        dibujarPelota();
+    }
+
+    function rebotarContraMuros() {
+        if (estado.pelota.x - estado.pelota.radio <= 0 || estado.pelota.x + estado.pelota.radio >= canvas.width) {
+            estado.pelota.vx *= -1;
+            estado.pelota.x = Math.max(estado.pelota.radio, Math.min(canvas.width - estado.pelota.radio, estado.pelota.x));
+        }
+
+        if (estado.pelota.y - estado.pelota.radio <= 0) {
+            estado.pelota.vy *= -1;
+            estado.pelota.y = estado.pelota.radio;
+        }
+    }
+
+    function rebotarContraPlataforma() {
+        const golpeaPlataforma =
+            estado.pelota.vy > 0 &&
+            estado.pelota.y + estado.pelota.radio >= estado.plataforma.y &&
+            estado.pelota.y + estado.pelota.radio <= estado.plataforma.y + estado.plataforma.alto + Math.abs(estado.pelota.vy) &&
+            estado.pelota.x >= estado.plataforma.x &&
+            estado.pelota.x <= estado.plataforma.x + estado.plataforma.ancho;
+
+        if (!golpeaPlataforma) {
+            return;
+        }
+
+        const puntoImpacto = (estado.pelota.x - (estado.plataforma.x + estado.plataforma.ancho / 2)) / (estado.plataforma.ancho / 2);
+        const angulo = Math.max(-1, Math.min(1, puntoImpacto));
+        estado.pelota.vx = angulo * 7;
+        estado.pelota.vy = -Math.max(configuracion.pelota.velocidad, Math.abs(estado.pelota.vy));
+        estado.pelota.y = estado.plataforma.y - estado.pelota.radio;
+    }
+
+    function revisarBloques() {
+        for (const bloque of estado.bloques) {
+            if (!bloque.vivo) {
+                continue;
+            }
+
+            const colisiona =
+                estado.pelota.x + estado.pelota.radio >= bloque.x &&
+                estado.pelota.x - estado.pelota.radio <= bloque.x + bloque.ancho &&
+                estado.pelota.y + estado.pelota.radio >= bloque.y &&
+                estado.pelota.y - estado.pelota.radio <= bloque.y + bloque.alto;
+
+            if (!colisiona) {
+                continue;
+            }
+
+            bloque.vivo = false;
+            estado.destruidos += 1;
+            actualizarMarcador();
+            estado.pelota.vy *= -1;
+
+            if (estado.destruidos === estado.bloques.length) {
+                terminarJuego(
+                    'Ganaste',
+                    '',
+                    'Jugar de nuevo',
+                    'estado-exito'
+                );
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    function revisarCaida() {
+        if (estado.pelota.y - estado.pelota.radio <= canvas.height) {
+            return false;
+        }
+
+        terminarJuego(
+            'Perdiste',
+            '',
+            'Reintentar',
+            'estado-peligro'
+        );
+        return true;
+    }
+
+    function actualizar() {
+        estado.pelota.x += estado.pelota.vx;
+        estado.pelota.y += estado.pelota.vy;
+
+        rebotarContraMuros();
+        rebotarContraPlataforma();
+
+        if (revisarBloques()) {
+            return;
+        }
+
+        revisarCaida();
+    }
+
+    function bucle() {
+        if (!estado.corriendo) {
+            return;
+        }
+
+        actualizar();
+        dibujar();
+        estado.cuadro = requestAnimationFrame(bucle);
+    }
+
+    escena.addEventListener('mousemove', (event) => {
+        moverPlataforma(event.clientX);
+    });
+
+    escena.addEventListener('touchmove', (event) => {
+        const toque = event.touches[0];
+        if (!toque) {
+            return;
+        }
+
+        moverPlataforma(toque.clientX);
+    }, { passive: true });
+
+    botonCapa.addEventListener('click', () => {
+        reiniciarJuego();
+        iniciarJuego();
+    });
+
+    window.addEventListener('resize', () => {
+        redimensionarCanvas();
+        reiniciarJuego();
+    });
+
+    redimensionarCanvas();
+    reiniciarJuego();
+    dibujar();
+</script>
+</body>
+</html>

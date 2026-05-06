@@ -2,6 +2,7 @@
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     var action = ViewContext.RouteData.Values["action"]?.ToString();
     var isToolsSection = controller is "Variance" or "Density" or "StandardNormal" or "TStudent" or "ExpectedValue" or "NegativeBinomial";
+    var isGamesSection = controller == "Games";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +23,7 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-lg">
             <div class="container app-container">
-                <a class="brand-mark" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="brand-mark" asp-area="" asp-controller="Home" asp-action="CortisolRanking">
                     <span class="brand-mark__badge" aria-hidden="true">
                         <svg viewBox="0 0 64 64" class="brand-mark__icon" role="img">
                             <path d="M14 46c6-13 12-20 18-20 8 0 12 11 18 11 4 0 8-3 12-9" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -73,8 +74,18 @@
                         <li class="nav-item">
                             <a class="nav-link @(controller == "Problems" ? "active" : null)" asp-area="" asp-controller="Problems" asp-action="Index">Problemas</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(controller == "Home" && action == "Games" ? "active" : null)" asp-area="" asp-controller="Home" asp-action="Games">Juegos</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(isGamesSection ? "active" : null)" href="#" id="games-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Juegos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="games-dropdown">
+                                <li>
+                                    <a class="dropdown-item @(controller == "Games" && action == "Game1" ? "active" : null)" asp-area="" asp-controller="Games" asp-action="Game1">Juego 1</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(controller == "Games" && action == "Game2" ? "active" : null)" asp-area="" asp-controller="Games" asp-action="Game2">Juego 2</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
